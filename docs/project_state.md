@@ -2416,6 +2416,7 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 - [x] Prisma installed and connected to the real Neon database (not just configured — `prisma generate` and `prisma migrate dev` both run successfully against the live database)
 - [x] First real migration applied: `Organization` model exists as an actual table in Neon, establishing the multi-tenant-ready foundation decided in Section 35A
 - [x] Root `.gitignore` protecting `.env` and other secrets from being committed (Section 11)
+- [x] Repository pushed to GitHub, `main` and `dev` branches both live and in sync (private repo: `yhwhdesign/gdg-overwatch`)
 
 ## In Progress / Not Yet Done
 
@@ -2428,9 +2429,21 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 
 - HCP webhook/API tier still unconfirmed (see Section 35A) — does not block remaining Phase 1 work, but must be resolved before Phase 3 begins.
 
+## Lessons Learned This Session
+
+- `api/.env` was briefly committed locally before being caught and removed via `git rm --cached` + amend, before it was ever pushed. No real exposure occurred, but the takeaway: double-check `git status` before the *first* commit in a new repo to confirm `.gitignore` is actually excluding what it should.
+- When creating a new GitHub repo to push an existing local repo into, leave README/.gitignore/license checkboxes unchecked — checking any of them creates a conflicting initial commit and requires an unrelated-histories merge to fix (as happened here).
+
 ## Next Step
 
-Continue Phase 1: decide on logging approach, basic API protection, and finish the remaining Phase 1 build items (Section "PHASE 1 — PROJECT FOUNDATION") before moving to Phase 2 (Identity & Permissions).
+Continue Phase 1 remaining items, in this order:
+1. Logging strategy (what gets logged, where it goes, how to find something later)
+2. Basic API protection (baseline protections before real auth arrives in Phase 2)
+3. Security headers
+4. Dependency/security scanning
+5. First real deployment to Vercel + verification of `api/index.ts` in production
+
+Then close out Phase 1's Definition of Done checklist before moving to Phase 2 (Identity & Permissions).
 
 ---
 
