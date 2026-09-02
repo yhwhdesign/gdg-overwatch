@@ -1,0 +1,44 @@
+// schema.prisma
+//
+// This file defines Overwatch's database structure. Prisma reads this
+// file and generates a type-safe client (`@prisma/client`) so that
+// database queries in our TypeScript code are checked at compile time —
+// e.g. if you typo a field name, you get an error before running the
+// code, not a silent bug in production.
+//
+// This is intentionally minimal right now (Phase 0/1 foundation only).
+// Real business tables (jobs, customers, parts, pricing...) get added
+// starting in Phase 2+ as each vertical slice needs them — we do not
+// build the entire database up front (see PROJECT_STATE.md Section 8,
+// "vertical slices").
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Organization represents one company using Overwatch.
+//
+// WHY THIS EXISTS ALREADY, THIS EARLY:
+// PROJECT_STATE.md's Phase 0 architecture decisions establish Overwatch
+// as multi-tenant-READY from day one, even though only one organization
+// (the project owner's company) will exist for the foreseeable future.
+// Every future table that holds company-specific data (jobs, customers,
+// users, parts, pricing, etc.) will include an organizationId foreign
+// key pointing here, and every query will be scoped by it. Retrofitting
+// that scoping after tables already exist without it is a much larger,
+// riskier migration than including it from the start.
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Future relations will attach here, e.g.:
+  // users     User[]
+  // jobs      Job[]
+}

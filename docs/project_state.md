@@ -1,11 +1,10 @@
 # PROJECT_STATE.md
-
 # OVERWATCH — Master Project State & Execution Roadmap
 
-**Project:** Overwatch
-**Document Version:** 1.0
-**Status:** Phase 0 — Discovery & Architecture
-**Development Model:** Local → `dev` → Testing/UAT → `main` → Production
+**Project:** Overwatch  
+**Document Version:** 1.2  
+**Status:** Phase 1 — Project Foundation (in progress). Phase 0 architecture decisions locked; HCP integration strategy still blocked pending tier confirmation (does not block Phase 1).  
+**Development Model:** Local → `dev` → Testing/UAT → `main` → Production  
 **Primary Goal:** Build a secure, reliable, low-cost operational intelligence platform that works alongside Housecall Pro and eventually becomes the company's primary operational interface.
 
 ---
@@ -16,16 +15,16 @@ This document is the **source of truth for the Overwatch project**.
 
 It exists to prevent:
 
-* Lost ideas
-* Lost requirements
-* Rebuilding completed work
-* Moving forward before a phase is actually finished
-* Security being added too late
-* Important decisions being forgotten
-* Uncontrolled feature creep
-* Deploying something that only works on a developer machine
-* Building large portions of the system without proving they work
-* Creating code that the project owner cannot understand later
+- Lost ideas
+- Lost requirements
+- Rebuilding completed work
+- Moving forward before a phase is actually finished
+- Security being added too late
+- Important decisions being forgotten
+- Uncontrolled feature creep
+- Deploying something that only works on a developer machine
+- Building large portions of the system without proving they work
+- Creating code that the project owner cannot understand later
 
 This document will be updated throughout development.
 
@@ -41,16 +40,16 @@ This document will be updated throughout development.
 
 The assistant is acting as:
 
-* Senior Full-Stack Developer
-* Software Architect
-* Database Architect
-* Integration Engineer
-* Security Advisor
-* UI/UX Architect
-* Testing Engineer
-* DevOps Advisor
-* AI Systems Architect
-* Technical Teacher
+- Senior Full-Stack Developer
+- Software Architect
+- Database Architect
+- Integration Engineer
+- Security Advisor
+- UI/UX Architect
+- Testing Engineer
+- DevOps Advisor
+- AI Systems Architect
+- Technical Teacher
 
 The assistant should not simply provide code.
 
@@ -70,14 +69,14 @@ The project owner wants to understand the system, not simply receive a finished 
 
 Therefore:
 
-* Code should be readable.
-* Important code should contain useful comments.
-* Architecture should be explained.
-* Complex functions should explain their purpose.
-* Security-sensitive code should explain important assumptions.
-* Integration code should explain what system it communicates with.
-* Database relationships should be understandable.
-* AI logic should explain what it is allowed and not allowed to do.
+- Code should be readable.
+- Important code should contain useful comments.
+- Architecture should be explained.
+- Complex functions should explain their purpose.
+- Security-sensitive code should explain important assumptions.
+- Integration code should explain what system it communicates with.
+- Database relationships should be understandable.
+- AI logic should explain what it is allowed and not allowed to do.
 
 The goal is:
 
@@ -93,17 +92,17 @@ This is a permanent project requirement.
 
 Comments should explain:
 
-* Why something is being done
-* Why a particular approach was chosen
-* Important business rules
-* Security considerations
-* Integration assumptions
-* Non-obvious calculations
-* State transitions
-* AI decision boundaries
-* Offline/synchronization behavior
-* Database relationships
-* Important edge cases
+- Why something is being done
+- Why a particular approach was chosen
+- Important business rules
+- Security considerations
+- Integration assumptions
+- Non-obvious calculations
+- State transitions
+- AI decision boundaries
+- Offline/synchronization behavior
+- Database relationships
+- Important edge cases
 
 ### Example
 
@@ -128,20 +127,20 @@ We do not want comments that merely repeat what the code already says.
 
 Important functions should have a short explanation of:
 
-* What the function does
-* What it expects
-* What it returns
-* Important side effects
-* Important failure conditions
+- What the function does
+- What it expects
+- What it returns
+- Important side effects
+- Important failure conditions
 
 ## Security-Sensitive Code
 
 Security-sensitive areas should receive especially clear comments explaining:
 
-* What is being protected
-* What authorization is being checked
-* Why the check exists
-* What could happen if the check were removed
+- What is being protected
+- What authorization is being checked
+- Why the check exists
+- What could happen if the check were removed
 
 ## Business Logic
 
@@ -149,14 +148,14 @@ Business rules should be easy to locate and understand.
 
 Examples:
 
-* Job state transitions
-* Pricing permissions
-* Discount limits
-* Part request rules
-* Cancellation reasons
-* Technician skill requirements
-* Scheduling constraints
-* AI automation permissions
+- Job state transitions
+- Pricing permissions
+- Discount limits
+- Part request rules
+- Cancellation reasons
+- Technician skill requirements
+- Scheduling constraints
+- AI automation permissions
 
 ## TODO Comments
 
@@ -181,12 +180,12 @@ When reasonable, code should favor clarity over cleverness.
 
 Avoid unnecessary:
 
-* Abstractions
-* One-line magic
-* Extremely compressed code
-* Unexplained patterns
-* Over-engineering
-* Dependencies that provide little value
+- Abstractions
+- One-line magic
+- Extremely compressed code
+- Unexplained patterns
+- Over-engineering
+- Dependencies that provide little value
 
 The project should remain understandable to the person maintaining it.
 
@@ -216,13 +215,13 @@ Housecall Pro remains the authoritative operational system initially.
 
 Overwatch adds:
 
-* Intelligence
-* Workflow
-* Better interfaces
-* Structured information
-* Automation
-* Analytics
-* Cross-system coordination
+- Intelligence
+- Workflow
+- Better interfaces
+- Structured information
+- Automation
+- Analytics
+- Cross-system coordination
 
 Overwatch does not attempt to replace HCP on day one.
 
@@ -230,16 +229,16 @@ Overwatch does not attempt to replace HCP on day one.
 
 Traditional software should handle:
 
-* Exact calculations
-* Permissions
-* State transitions
-* Pricing rules
-* Inventory quantities
-* Required fields
-* Scheduling constraints
-* Security
-* Authentication
-* Authorization
+- Exact calculations
+- Permissions
+- State transitions
+- Pricing rules
+- Inventory quantities
+- Required fields
+- Scheduling constraints
+- Security
+- Authentication
+- Authorization
 
 AI should not be responsible for exact facts when deterministic software can handle them.
 
@@ -247,14 +246,14 @@ AI should not be responsible for exact facts when deterministic software can han
 
 AI is appropriate for:
 
-* Understanding natural language
-* Extracting information
-* Classifying notes
-* Summarizing history
-* Identifying patterns
-* Recommendations
-* Predictive analysis
-* Interpreting technician voice notes
+- Understanding natural language
+- Extracting information
+- Classifying notes
+- Summarizing history
+- Identifying patterns
+- Recommendations
+- Predictive analysis
+- Interpreting technician voice notes
 
 AI must not become an uncontrolled source of truth.
 
@@ -276,26 +275,26 @@ Priority:
 
 Every new external service should be evaluated for:
 
-* Cost
-* Free tier
-* Long-term cost
-* API availability
-* Vendor lock-in
-* Reliability
-* Security
-* Data ownership
-* Ease of replacement
+- Cost
+- Free tier
+- Long-term cost
+- API availability
+- Vendor lock-in
+- Reliability
+- Security
+- Data ownership
+- Ease of replacement
 
 ## Third-Party Dependency Rule
 
 Before adding a paid dependency, document:
 
-* What it does
-* Why we need it
-* Free alternatives considered
-* Estimated cost
-* What happens if the service disappears
-* Whether the architecture can replace it later
+- What it does
+- Why we need it
+- Free alternatives considered
+- Estimated cost
+- What happens if the service disappears
+- Whether the architecture can replace it later
 
 ---
 
@@ -303,9 +302,9 @@ Before adding a paid dependency, document:
 
 Primary development tools:
 
-* VS Code
-* GitHub
-* Local development environment
+- VS Code
+- GitHub
+- Local development environment
 
 The project must remain easy to run.
 
@@ -416,28 +415,28 @@ Every phase follows the same lifecycle.
 
 Define:
 
-* Objective
-* Requirements
-* Dependencies
-* Risks
-* Security requirements
-* Data requirements
-* UI requirements
-* Testing requirements
-* Exit criteria
+- Objective
+- Requirements
+- Dependencies
+- Risks
+- Security requirements
+- Data requirements
+- UI requirements
+- Testing requirements
+- Exit criteria
 
 ## STEP 2 — DESIGN
 
 Determine:
 
-* Architecture
-* Database changes
-* API changes
-* UI flow
-* Permissions
-* Integration behavior
-* Error handling
-* Offline behavior where applicable
+- Architecture
+- Database changes
+- API changes
+- UI flow
+- Permissions
+- Integration behavior
+- Error handling
+- Offline behavior where applicable
 
 ## STEP 3 — BUILD
 
@@ -451,29 +450,29 @@ Not afterward.
 
 Review:
 
-* Authentication
-* Authorization
-* Data exposure
-* Input validation
-* Secrets
-* Logging
-* Permissions
-* API access
-* File access
-* Privacy
+- Authentication
+- Authorization
+- Data exposure
+- Input validation
+- Secrets
+- Logging
+- Permissions
+- API access
+- File access
+- Privacy
 
 ## STEP 5 — TEST
 
 Test:
 
-* Happy path
-* Failure path
-* Edge cases
-* Permission boundaries
-* Mobile behavior
-* Offline behavior where applicable
-* Integration behavior
-* Recovery behavior
+- Happy path
+- Failure path
+- Edge cases
+- Permission boundaries
+- Mobile behavior
+- Offline behavior where applicable
+- Integration behavior
+- Recovery behavior
 
 ## STEP 6 — USER ACCEPTANCE
 
@@ -485,11 +484,11 @@ A feature is not complete simply because the developer says it works.
 
 Update:
 
-* PROJECT_STATE.md
-* README where necessary
-* Architecture documentation where necessary
-* API documentation where necessary
-* Important code comments
+- PROJECT_STATE.md
+- README where necessary
+- Architecture documentation where necessary
+- API documentation where necessary
+- Important code comments
 
 ## STEP 8 — DEPLOY
 
@@ -509,82 +508,82 @@ Only after all exit criteria are satisfied.
 
 A phase is NOT complete because:
 
-* The page loads
-* The code compiles
-* The API works once
-* It works on the developer's computer
-* The UI looks good
-* The developer believes it is finished
+- The page loads
+- The code compiles
+- The API works once
+- It works on the developer's computer
+- The UI looks good
+- The developer believes it is finished
 
 A phase is complete only when all applicable requirements below are satisfied.
 
 ## Functionality
 
-* [ ] Requirements implemented
-* [ ] Normal workflow works
-* [ ] Error workflow works
-* [ ] Edge cases considered
-* [ ] Data is saved correctly
-* [ ] Data is retrieved correctly
+- [ ] Requirements implemented
+- [ ] Normal workflow works
+- [ ] Error workflow works
+- [ ] Edge cases considered
+- [ ] Data is saved correctly
+- [ ] Data is retrieved correctly
 
 ## Security
 
-* [ ] Authentication implemented where required
-* [ ] Authorization implemented where required
-* [ ] User permissions verified
-* [ ] Input validated
-* [ ] Sensitive data protected
-* [ ] Secrets not exposed
-* [ ] API endpoints protected
-* [ ] Security failure cases tested
+- [ ] Authentication implemented where required
+- [ ] Authorization implemented where required
+- [ ] User permissions verified
+- [ ] Input validated
+- [ ] Sensitive data protected
+- [ ] Secrets not exposed
+- [ ] API endpoints protected
+- [ ] Security failure cases tested
 
 ## Reliability
 
-* [ ] Errors handled
-* [ ] Failed requests handled
-* [ ] Retry behavior considered
-* [ ] Duplicate actions considered
-* [ ] Data integrity protected
-* [ ] Recovery behavior tested
+- [ ] Errors handled
+- [ ] Failed requests handled
+- [ ] Retry behavior considered
+- [ ] Duplicate actions considered
+- [ ] Data integrity protected
+- [ ] Recovery behavior tested
 
 ## UX
 
-* [ ] Workflow is understandable
-* [ ] Mobile behavior tested where applicable
-* [ ] Loading states exist
-* [ ] Error states exist
-* [ ] Empty states exist
-* [ ] User feedback exists
-* [ ] User does not have to unnecessarily repeat information
+- [ ] Workflow is understandable
+- [ ] Mobile behavior tested where applicable
+- [ ] Loading states exist
+- [ ] Error states exist
+- [ ] Empty states exist
+- [ ] User feedback exists
+- [ ] User does not have to unnecessarily repeat information
 
 ## Testing
 
-* [ ] Developer testing completed
-* [ ] Automated tests added where appropriate
-* [ ] Integration tests added where appropriate
-* [ ] Manual testing completed
-* [ ] Failure cases tested
-* [ ] Permission testing completed
+- [ ] Developer testing completed
+- [ ] Automated tests added where appropriate
+- [ ] Integration tests added where appropriate
+- [ ] Manual testing completed
+- [ ] Failure cases tested
+- [ ] Permission testing completed
 
 ## Documentation
 
-* [ ] PROJECT_STATE.md updated
-* [ ] Important code commented
-* [ ] README updated if needed
-* [ ] Important architectural decisions recorded
+- [ ] PROJECT_STATE.md updated
+- [ ] Important code commented
+- [ ] README updated if needed
+- [ ] Important architectural decisions recorded
 
 ## Deployment
 
-* [ ] Builds successfully
-* [ ] Deploys successfully
-* [ ] Production/staging behavior verified
-* [ ] Rollback path understood
+- [ ] Builds successfully
+- [ ] Deploys successfully
+- [ ] Production/staging behavior verified
+- [ ] Rollback path understood
 
 ## Acceptance
 
-* [ ] User has tested it
-* [ ] User accepts the phase
-* [ ] No known blocker remains
+- [ ] User has tested it
+- [ ] User accepts the phase
+- [ ] No known blocker remains
 
 ---
 
@@ -636,13 +635,13 @@ Are API keys, tokens, credentials, and private configuration protected?
 
 Initial role concepts:
 
-* Technician
-* Dispatcher
-* Sales
-* Manager
-* HR/People
-* Warehouse/Parts
-* Administrator
+- Technician
+- Dispatcher
+- Sales
+- Manager
+- HR/People
+- Warehouse/Parts
+- Administrator
 
 Permissions should be capability-based where practical rather than relying solely on job titles.
 
@@ -675,35 +674,35 @@ Understand the problem completely enough to build the correct foundation.
 
 ### Work
 
-* Finalize Overwatch vision
-* Define system boundaries
-* Research HCP APIs
-* Research HCP webhooks
-* Research HCP messaging
-* Research HCP GPS capabilities
-* Research HCP customer portal capabilities
-* Research Mobile N Client / DSI functionality
-* Evaluate communication options
-* Evaluate GPS options
-* Evaluate PWA vs native
-* Evaluate database options
-* Evaluate hosting options
-* Define authentication architecture
-* Define authorization model
-* Define data ownership
-* Define event model
-* Define offline architecture
-* Define initial AI boundaries
+- Finalize Overwatch vision
+- Define system boundaries
+- Research HCP APIs
+- Research HCP webhooks
+- Research HCP messaging
+- Research HCP GPS capabilities
+- Research HCP customer portal capabilities
+- Research Mobile N Client / DSI functionality
+- Evaluate communication options
+- Evaluate GPS options
+- Evaluate PWA vs native
+- Evaluate database options
+- Evaluate hosting options
+- Define authentication architecture
+- Define authorization model
+- Define data ownership
+- Define event model
+- Define offline architecture
+- Define initial AI boundaries
 
 ### Exit Criteria
 
-* [ ] Architecture documented
-* [ ] Major dependencies understood
-* [ ] Technology choices documented
-* [ ] Major risks documented
-* [ ] HCP integration strategy documented
-* [ ] Security architecture direction documented
-* [ ] First vertical slice defined
+- [ ] Architecture documented
+- [ ] Major dependencies understood
+- [ ] Technology choices documented
+- [ ] Major risks documented
+- [ ] HCP integration strategy documented
+- [ ] Security architecture direction documented
+- [ ] First vertical slice defined
 
 ---
 
@@ -715,24 +714,24 @@ Create the production-quality application foundation.
 
 ### Build
 
-* Repository
-* React/frontend foundation
-* Backend/API foundation
-* Database foundation
-* Environment configuration
-* Logging
-* Error handling
-* Basic testing framework
-* Development documentation
-* Deployment foundation
+- Repository
+- React/frontend foundation
+- Backend/API foundation
+- Database foundation
+- Environment configuration
+- Logging
+- Error handling
+- Basic testing framework
+- Development documentation
+- Deployment foundation
 
 ### Security
 
-* Secrets management
-* Secure environment configuration
-* Basic API protection
-* Security headers where applicable
-* Dependency/security scanning where practical
+- Secrets management
+- Secure environment configuration
+- Basic API protection
+- Security headers where applicable
+- Dependency/security scanning where practical
 
 ### Exit Criteria
 
@@ -755,23 +754,23 @@ Establish secure user identity.
 
 ### Build
 
-* Login
-* Logout
-* Session management
-* User records
-* Roles
-* Permissions
-* Protected routes
-* Protected APIs
-* Account state
+- Login
+- Logout
+- Session management
+- User records
+- Roles
+- Permissions
+- Protected routes
+- Protected APIs
+- Account state
 
 ### Security
 
-* Password/security strategy
-* Session protection
-* Authorization checks
-* Unauthorized access handling
-* Audit events
+- Password/security strategy
+- Session protection
+- Authorization checks
+- Unauthorized access handling
+- Audit events
 
 ### Exit Criteria
 
@@ -787,15 +786,15 @@ Create the communication layer between Overwatch and HCP.
 
 ### Build
 
-* HCP authentication/integration
-* Customer synchronization
-* Job synchronization
-* Technician synchronization
-* Webhook receiver
-* Event processing
-* Error handling
-* Sync status
-* Retry handling
+- HCP authentication/integration
+- Customer synchronization
+- Job synchronization
+- Technician synchronization
+- Webhook receiver
+- Event processing
+- Error handling
+- Sync status
+- Retry handling
 
 ### Critical Principle
 
@@ -815,16 +814,16 @@ Give the technician a useful daily operational interface.
 
 ### Build
 
-* Today's jobs
-* Job list
-* Job details
-* Customer
-* Address
-* Job description
-* Job history
-* Equipment information where available
-* Schedule
-* Basic navigation
+- Today's jobs
+- Job list
+- Job details
+- Customer
+- Address
+- Job description
+- Job history
+- Equipment information where available
+- Schedule
+- Basic navigation
 
 ### Exit Criteria
 
@@ -867,11 +866,11 @@ RESCHEDULE_REQUIRED
 
 Every state transition must:
 
-* Be authorized
-* Be recorded
-* Have appropriate timestamps
-* Handle invalid transitions
-* Synchronize appropriately
+- Be authorized
+- Be recorded
+- Have appropriate timestamps
+- Handle invalid transitions
+- Synchronize appropriately
 
 ### Critical Rule
 
@@ -885,14 +884,14 @@ The system must know why.
 
 ### Build
 
-* Technician location
-* Current job
-* Next job
-* ETA
-* Travel status
-* Arrival detection
-* Last known location
-* Schedule risk
+- Technician location
+- Current job
+- Next job
+- ETA
+- Travel status
+- Arrival detection
+- Last known location
+- Schedule risk
 
 ### Privacy
 
@@ -910,15 +909,15 @@ Location information provides useful operational value without creating unnecess
 
 ### Build
 
-* Voice notes
-* Text notes
-* Photos
-* Files
-* Job observations
-* Customer notes
-* Equipment details
-* Completion documentation
-* Signatures where applicable
+- Voice notes
+- Text notes
+- Photos
+- Files
+- Job observations
+- Customer notes
+- Equipment details
+- Completion documentation
+- Signatures where applicable
 
 ### AI
 
@@ -952,21 +951,21 @@ AI extraction must remain reviewable.
 
 ### Build
 
-* Part search
-* Part number
-* Description
-* Category
-* Availability
-* Quantity
-* Customer price
-* Cost where permitted
-* Parts used
-* Parts needed
-* Parts requested
-* Parts ordered
-* Backordered
-* Unknown part identification
-* Part photos
+- Part search
+- Part number
+- Description
+- Category
+- Availability
+- Quantity
+- Customer price
+- Cost where permitted
+- Parts used
+- Parts needed
+- Parts requested
+- Parts ordered
+- Backordered
+- Unknown part identification
+- Part photos
 
 ### Exit Criteria
 
@@ -978,14 +977,14 @@ A technician can identify and record the parts involved in a job without leaving
 
 ### Build
 
-* Part pricing
-* Labor
-* Estimates
-* Customer pricing
-* Discount permissions
-* Pricing overrides
-* Special pricing
-* Approval requests
+- Part pricing
+- Labor
+- Estimates
+- Customer pricing
+- Discount permissions
+- Pricing overrides
+- Special pricing
+- Approval requests
 
 ### Security
 
@@ -1001,14 +1000,14 @@ The UI cannot be the only protection.
 
 Technician can request:
 
-* Part
-* Pricing approval
-* Second technician
-* Office assistance
-* Part identification
-* Customer approval
-* Additional equipment
-* Scheduling assistance
+- Part
+- Pricing approval
+- Second technician
+- Office assistance
+- Part identification
+- Customer approval
+- Additional equipment
+- Scheduling assistance
 
 The office receives the request with context automatically.
 
@@ -1024,25 +1023,25 @@ Understand exactly why jobs do not get completed.
 
 Examples:
 
-* Customer canceled
-* Customer unavailable
-* Customer declined
-* Price
-* Went with competitor
-* Fixed themselves
-* Scheduling issue
-* Duplicate job
-* Technician skill limitation
-* Wrong job description
-* Wrong part
-* Missing part
-* Second technician required
-* Specialty equipment required
-* Unsafe
-* Office approval required
-* Time ran out
-* Technician unable to complete
-* Other
+- Customer canceled
+- Customer unavailable
+- Customer declined
+- Price
+- Went with competitor
+- Fixed themselves
+- Scheduling issue
+- Duplicate job
+- Technician skill limitation
+- Wrong job description
+- Wrong part
+- Missing part
+- Second technician required
+- Specialty equipment required
+- Unsafe
+- Office approval required
+- Time ran out
+- Technician unable to complete
+- Other
 
 "Other" requires an explanation.
 
@@ -1060,14 +1059,14 @@ The final structured reason must remain reviewable.
 
 Contextual job communication:
 
-* Text
-* Push notifications
-* Voice
-* Push-to-talk where infrastructure supports it
-* Photos
-* Files
-* Video/office call where practical
-* Emergency/help request
+- Text
+- Push notifications
+- Voice
+- Push-to-talk where infrastructure supports it
+- Photos
+- Files
+- Video/office call where practical
+- Emergency/help request
 
 The office should automatically receive job context.
 
@@ -1075,13 +1074,13 @@ The office should automatically receive job context.
 
 Evaluate:
 
-* HCP messaging
-* Twilio
-* WebRTC
-* Zello
-* Microsoft Teams
-* Open-source alternatives
-* Custom communication infrastructure
+- HCP messaging
+- Twilio
+- WebRTC
+- Zello
+- Microsoft Teams
+- Open-source alternatives
+- Custom communication infrastructure
 
 ---
 
@@ -1095,22 +1094,22 @@ A technician should remain productive when connectivity is poor.
 
 Cache:
 
-* Day's jobs
-* Job details
-* Customer information
-* Relevant history
-* Parts information where practical
+- Day's jobs
+- Job details
+- Customer information
+- Relevant history
+- Parts information where practical
 
 ### Offline Actions
 
 Queue:
 
-* Notes
-* Photos
-* State changes
-* Parts
-* Check-in/out
-* Documentation
+- Notes
+- Photos
+- State changes
+- Parts
+- Check-in/out
+- Documentation
 
 ### Sync
 
@@ -1132,11 +1131,11 @@ HCP
 
 Must handle:
 
-* Duplicate prevention
-* Retry
-* Conflicts
-* Partial failures
-* Recovery
+- Duplicate prevention
+- Retry
+- Conflicts
+- Partial failures
+- Recovery
 
 ---
 
@@ -1146,13 +1145,13 @@ Must handle:
 
 Appointment-specific customer experience:
 
-* Technician status
-* ETA
-* Approximate map location
-* Technician name/photo
-* Appointment updates
-* Communication
-* Relevant documentation
+- Technician status
+- ETA
+- Approximate map location
+- Technician name/photo
+- Appointment updates
+- Communication
+- Relevant documentation
 
 Privacy remains a primary requirement.
 
@@ -1214,25 +1213,25 @@ Turn messy information into structured operational information.
 
 Sources:
 
-* Emails
-* Job descriptions
-* Technician notes
-* Voice
-* Customer requests
-* Internal messages
-* Documents
+- Emails
+- Job descriptions
+- Technician notes
+- Voice
+- Customer requests
+- Internal messages
+- Documents
 
 AI extracts:
 
-* Customer
-* Problem
-* Equipment
-* Urgency
-* Required skills
-* Parts
-* Scheduling requirements
-* Risks
-* Follow-up requirements
+- Customer
+- Problem
+- Equipment
+- Urgency
+- Required skills
+- Parts
+- Scheduling requirements
+- Risks
+- Follow-up requirements
 
 ---
 
@@ -1244,17 +1243,17 @@ Continuously monitor operations.
 
 Potential examples:
 
-* Job at risk
-* Technician running late
-* Part delay
-* Missing documentation
-* Customer waiting
-* Repeated failed visits
-* Skill mismatch
-* Schedule conflict
-* Unusual cancellation
-* Pricing problem
-* Communication failure
+- Job at risk
+- Technician running late
+- Part delay
+- Missing documentation
+- Customer waiting
+- Repeated failed visits
+- Skill mismatch
+- Schedule conflict
+- Unusual cancellation
+- Pricing problem
+- Communication failure
 
 AI should recommend actions, not silently take dangerous actions.
 
@@ -1284,19 +1283,19 @@ Answers must be grounded in Overwatch data.
 
 Scheduling should consider:
 
-* Skills
-* Certifications
-* Availability
-* PTO
-* Location
-* Travel time
-* Job duration
-* Historical performance
-* Parts
-* Equipment
-* Customer requirements
-* Priority
-* Existing schedule
+- Skills
+- Certifications
+- Availability
+- PTO
+- Location
+- Travel time
+- Job duration
+- Historical performance
+- Parts
+- Equipment
+- Customer requirements
+- Priority
+- Existing schedule
 
 The system should first recommend.
 
@@ -1316,12 +1315,12 @@ ACTUAL
 
 Examples:
 
-* Estimated job duration vs actual
-* Estimated travel vs actual
-* Predicted parts vs actual
-* Recommended technician vs outcome
-* Predicted cancellation risk vs actual
-* Predicted skill match vs result
+- Estimated job duration vs actual
+- Estimated travel vs actual
+- Predicted parts vs actual
+- Recommended technician vs outcome
+- Predicted cancellation risk vs actual
+- Predicted skill match vs result
 
 This creates the feedback loop.
 
@@ -1333,27 +1332,27 @@ Create operational dashboards for:
 
 ### Dispatch
 
-* Jobs
-* At-risk jobs
-* Technician locations
-* Requests
-* Schedule
-* Recommendations
+- Jobs
+- At-risk jobs
+- Technician locations
+- Requests
+- Schedule
+- Recommendations
 
 ### Sales
 
-* Requests
-* Quotes
-* Follow-ups
-* Lost opportunities
+- Requests
+- Quotes
+- Follow-ups
+- Lost opportunities
 
 ### Management
 
-* Company health
-* Trends
-* Risks
-* Recommendations
-* Performance
+- Company health
+- Trends
+- Risks
+- Recommendations
+- Performance
 
 ---
 
@@ -1363,16 +1362,16 @@ Long-term employee experience inspired by systems such as UKG.
 
 Potential areas:
 
-* Employee profile
-* Schedule
-* PTO
-* Time
-* Training
-* Certifications
-* Documents
-* Company announcements
-* Tasks
-* Employee self-service
+- Employee profile
+- Schedule
+- PTO
+- Time
+- Training
+- Certifications
+- Documents
+- Company announcements
+- Tasks
+- Employee self-service
 
 ---
 
@@ -1410,17 +1409,17 @@ Only for carefully authorized categories.
 
 Every important automated or AI-assisted action should record:
 
-* What happened
-* Who initiated it
-* Timestamp
-* Source data
-* AI recommendation
-* Reason
-* Confidence
-* Approval
-* Action taken
-* Result
-* HCP synchronization result
+- What happened
+- Who initiated it
+- Timestamp
+- Source data
+- AI recommendation
+- Reason
+- Confidence
+- Approval
+- Action taken
+- Result
+- HCP synchronization result
 
 ---
 
@@ -1432,22 +1431,22 @@ This phase is a formal security review/hardening pass.
 
 Review:
 
-* Authentication
-* Authorization
-* API security
-* Database security
-* Secrets
-* File access
-* Logging
-* Audit trails
-* Privacy
-* Employee location
-* Customer data
-* AI data access
-* Third-party integrations
-* Dependency vulnerabilities
-* Backup/recovery
-* Incident response
+- Authentication
+- Authorization
+- API security
+- Database security
+- Secrets
+- File access
+- Logging
+- Audit trails
+- Privacy
+- Employee location
+- Customer data
+- AI data access
+- Third-party integrations
+- Dependency vulnerabilities
+- Backup/recovery
+- Incident response
 
 ---
 
@@ -1457,21 +1456,21 @@ Testing should exist throughout development.
 
 Final testing expands into:
 
-* Unit testing
-* Integration testing
-* API testing
-* Database testing
-* Authentication testing
-* Authorization testing
-* Security testing
-* Mobile testing
-* Offline testing
-* Synchronization testing
-* HCP integration testing
-* AI evaluation
-* Performance testing
-* Failure/recovery testing
-* Regression testing
+- Unit testing
+- Integration testing
+- API testing
+- Database testing
+- Authentication testing
+- Authorization testing
+- Security testing
+- Mobile testing
+- Offline testing
+- Synchronization testing
+- HCP integration testing
+- AI evaluation
+- Performance testing
+- Failure/recovery testing
+- Regression testing
 
 ---
 
@@ -1533,19 +1532,19 @@ UAT failures return the phase to development.
 
 Verify:
 
-* Environment configuration
-* Secrets
-* Database
-* Backups
-* Monitoring
-* Logging
-* Error tracking
-* Performance
-* Security
-* Deployment
-* Rollback
-* Documentation
-* Support procedures
+- Environment configuration
+- Secrets
+- Database
+- Backups
+- Monitoring
+- Logging
+- Error tracking
+- Performance
+- Security
+- Deployment
+- Rollback
+- Documentation
+- Support procedures
 
 ---
 
@@ -1555,10 +1554,10 @@ Production deployment occurs only after approval.
 
 Deployment must be:
 
-* Repeatable
-* Documented
-* Recoverable
-* Verifiable
+- Repeatable
+- Documented
+- Recoverable
+- Verifiable
 
 ---
 
@@ -1568,16 +1567,16 @@ Production Overwatch must be observable.
 
 Monitor:
 
-* Application errors
-* API failures
-* HCP synchronization
-* Authentication failures
-* Database health
-* Queue failures
-* Offline sync failures
-* AI failures
-* Performance
-* Automation actions
+- Application errors
+- API failures
+- HCP synchronization
+- Authentication failures
+- Database health
+- Queue failures
+- Offline sync failures
+- AI failures
+- Performance
+- Automation actions
 
 ---
 
@@ -1613,12 +1612,12 @@ Audit Record
 
 This slice must be:
 
-* Secure
-* Tested
-* Documented
-* Deployable
-* Understandable
-* Usable on the intended technician device
+- Secure
+- Tested
+- Documented
+- Deployable
+- Understandable
+- Usable on the intended technician device
 
 This is the first major architectural proof.
 
@@ -1692,11 +1691,11 @@ The schema will be designed as each phase requires it.
 
 For every important data type, Overwatch must know:
 
-* Where it originated
-* Who owns it
-* Whether Overwatch can modify it
-* Where it synchronizes
-* What happens when systems disagree
+- Where it originated
+- Who owns it
+- Whether Overwatch can modify it
+- Where it synchronizes
+- What happens when systems disagree
 
 Example:
 
@@ -1718,14 +1717,14 @@ HCP synchronization
 
 AI must never silently:
 
-* Invent customer information
-* Invent pricing
-* Invent inventory
-* Override permissions
-* Override hard scheduling constraints
-* Change important records without authorization
-* Hide uncertainty
-* Make high-risk decisions without an approved workflow
+- Invent customer information
+- Invent pricing
+- Invent inventory
+- Override permissions
+- Override hard scheduling constraints
+- Change important records without authorization
+- Hide uncertainty
+- Make high-risk decisions without an approved workflow
 
 AI should communicate uncertainty.
 
@@ -1769,11 +1768,11 @@ When a new requirement appears:
 
 ## Do Not
 
-* Randomly add features
-* Rewrite completed systems without reason
-* Change architecture because a new library looks interesting
-* Add dependencies without evaluating them
-* Skip phase gates
+- Randomly add features
+- Rewrite completed systems without reason
+- Change architecture because a new library looks interesting
+- Add dependencies without evaluating them
+- Skip phase gates
 
 ---
 
@@ -1794,14 +1793,14 @@ REVISIT WHEN:
 
 Examples:
 
-* Database selection
-* Authentication provider
-* HCP integration method
-* Communication platform
-* PWA vs native
-* Hosting
-* AI provider
-* Offline architecture
+- Database selection
+- Authentication provider
+- HCP integration method
+- Communication platform
+- PWA vs native
+- Hosting
+- AI provider
+- Offline architecture
 
 ---
 
@@ -1858,37 +1857,37 @@ Create the final technical architecture and execution plan before implementation
 
 ## Completed
 
-* Overwatch vision established
-* Technician-first direction established
-* HCP remains initial system of record
-* Job state model established
-* Parts requirement established
-* Pricing requirement established
-* Part request requirement established
-* Job outcome reasons established
-* GPS/ETA requirement established
-* Communication requirement established
-* Offline requirement established
-* Event-driven architecture direction established
-* AI architecture direction established
-* Security-by-design requirement established
-* Two-branch Git workflow established
-* Phase-gated development established
-* Low-cost operating requirement established
-* Code readability/commenting requirement established
+- Overwatch vision established
+- Technician-first direction established
+- HCP remains initial system of record
+- Job state model established
+- Parts requirement established
+- Pricing requirement established
+- Part request requirement established
+- Job outcome reasons established
+- GPS/ETA requirement established
+- Communication requirement established
+- Offline requirement established
+- Event-driven architecture direction established
+- AI architecture direction established
+- Security-by-design requirement established
+- Two-branch Git workflow established
+- Phase-gated development established
+- Low-cost operating requirement established
+- Code readability/commenting requirement established
 
 ## In Progress
 
-* Final architecture
-* Technology selection
-* HCP integration research
-* Communication infrastructure research
-* GPS strategy
-* Offline strategy
-* Authentication strategy
-* Database strategy
-* Hosting strategy
-* First vertical slice definition
+- Final architecture
+- Technology selection
+- HCP integration research
+- Communication infrastructure research
+- GPS strategy
+- Offline strategy
+- Authentication strategy
+- Database strategy
+- Hosting strategy
+- First vertical slice definition
 
 ## Blocked
 
@@ -1896,17 +1895,17 @@ None currently.
 
 ## Known Risks
 
-* HCP API limitations
-* HCP synchronization behavior
-* iOS PWA limitations
-* Background GPS limitations
-* Push notification limitations
-* Offline synchronization complexity
-* Communication infrastructure cost
-* AI operating cost
-* Data volume
-* Employee/customer privacy
-* Future scale
+- HCP API limitations
+- HCP synchronization behavior
+- iOS PWA limitations
+- Background GPS limitations
+- Push notification limitations
+- Offline synchronization complexity
+- Communication infrastructure cost
+- AI operating cost
+- Data volume
+- Employee/customer privacy
+- Future scale
 
 ## Next Major Step
 
@@ -1981,13 +1980,13 @@ Instead:
 
 The assistant should never silently:
 
-* Change architecture
-* Replace a library
-* Change database structure
-* Change authentication
-* Change deployment
-* Remove functionality
-* Modify requirements
+- Change architecture
+- Replace a library
+- Change database structure
+- Change authentication
+- Change deployment
+- Remove functionality
+- Modify requirements
 
 without explaining the reason.
 
@@ -2022,15 +2021,15 @@ Additional documentation can be created when justified.
 
 Production means:
 
-* Secure
-* Tested
-* Recoverable
-* Documented
-* Observable
-* Usable
-* Deployable
-* Supported
-* Verified
+- Secure
+- Tested
+- Recoverable
+- Documented
+- Observable
+- Usable
+- Deployable
+- Supported
+- Verified
 
 ---
 
@@ -2040,14 +2039,14 @@ Every phase must produce something that could reasonably be handed to its intend
 
 A phase should not leave behind:
 
-* Known critical bugs
-* Unprotected APIs
-* Broken permissions
-* Unhandled obvious failures
-* Undocumented architecture
-* Untested critical workflows
-* Temporary hacks that are being treated as permanent
-* Data corruption risks
+- Known critical bugs
+- Unprotected APIs
+- Broken permissions
+- Unhandled obvious failures
+- Undocumented architecture
+- Untested critical workflows
+- Temporary hacks that are being treated as permanent
+- Data corruption risks
 
 Temporary implementations are allowed during development only when clearly documented and intentionally scheduled for replacement.
 
@@ -2090,12 +2089,12 @@ The ultimate Overwatch vision is:
 
 Over time, Overwatch should understand:
 
-* What is happening
-* What has happened
-* What is likely to happen
-* What needs attention
-* What should happen next
-* What action can safely be automated
+- What is happening
+- What has happened
+- What is likely to happen
+- What needs attention
+- What should happen next
+- What action can safely be automated
 
 ---
 
@@ -2225,20 +2224,20 @@ Overwatch is not "finished" when the original feature list is checked off.
 
 The system is successful when:
 
-* Technicians can perform their work efficiently.
-* Office staff can see what is happening.
-* Customers receive appropriate information.
-* Information is entered once.
-* HCP remains synchronized.
-* Important operational events are visible.
-* The company understands why work succeeds or fails.
-* Scheduling improves from actual operational data.
-* AI provides useful, grounded intelligence.
-* Automation is controlled and auditable.
-* Employees have a unified operational experience.
-* The system is secure.
-* The system is reliable.
-* The system can evolve without becoming unmaintainable.
+- Technicians can perform their work efficiently.
+- Office staff can see what is happening.
+- Customers receive appropriate information.
+- Information is entered once.
+- HCP remains synchronized.
+- Important operational events are visible.
+- The company understands why work succeeds or fails.
+- Scheduling improves from actual operational data.
+- AI provides useful, grounded intelligence.
+- Automation is controlled and auditable.
+- Employees have a unified operational experience.
+- The system is secure.
+- The system is reliable.
+- The system can evolve without becoming unmaintainable.
 
 ---
 
@@ -2348,22 +2347,109 @@ Then we build the next slice.
 
 ---
 
+# 35A. ARCHITECTURE DECISIONS LOG (Phase 0)
+
+This section records decisions made during Phase 0 so we never lose the reasoning behind them (Rule 9 — never silently change architecture).
+
+## Decision: Technology Stack (Locked)
+
+**Date logged:** Phase 0, first build session.
+
+| Layer | Choice | Why |
+|---|---|---|
+| Language | TypeScript (frontend + backend) | Industry standard for serious Node/React projects; catches errors before runtime; project owner has some familiarity from other projects and wants to learn it as we build. |
+| Backend runtime/framework | Node.js + Express | Node is the most-used web technology among developers (Stack Overflow 2025), and Express is the most widely used Node framework. Using JavaScript/TypeScript on both frontend and backend keeps the project to one language, which matters for the teaching goal. Express chosen over NestJS specifically because it is minimal/unopinionated — the owner sees every piece of what's happening rather than framework "magic." |
+| Database | PostgreSQL (hosted on Neon) | PostgreSQL is the most-used, most-admired, and most-desired database among professional developers (Stack Overflow 2025), is free/open-source/self-hostable (fits Section 5 cost philosophy), and provides strong ACID guarantees needed for job state, pricing, and audit data. Neon specifically chosen because the owner already uses it, it has a generous free tier, scales to zero when idle, and its database branching feature mirrors the project's `dev`/`main` git branch workflow (Section 7). |
+| ORM | Prisma | Owner already uses it; makes schema and relationships readable (supports the teaching goal in Section 3); industry-standard pairing with Postgres + Node. |
+| Frontend | React + Vite + vite-plugin-pwa | React remains the dominant frontend library; Vite is the current standard build tool (replacing deprecated Create React App); vite-plugin-pwa handles the service worker, offline caching, and installable-app manifest needed for the PWA requirement. |
+| Hosting | Vercel | Owner already uses it; strong fit for the React/Vite frontend; free tier and per-branch preview deploys support the UAT step in the phase process (Section 9, Step 6). |
+
+**Portability requirement:** To avoid vendor lock-in (Section 5), core business logic must not depend on Vercel-specific APIs beyond deployment configuration. Prisma keeps the database swappable. The Express backend and React frontend must remain deployable to any standard Node host (e.g. Render, Railway, Fly.io, a VPS) without a rewrite, in case the project needs to move off Vercel/Neon later or ship as a self-hosted white-label product.
+
+## Decision: Backend Architecture Shape — Serverless Functions
+
+Because Vercel runs backend code as short-lived serverless functions rather than an always-on server, Overwatch's backend is designed around short request/response cycles from the start, rather than a traditional long-running Express process. This affects two areas directly:
+
+- **Real-time features** (see below): designed around polling instead of persistent connections.
+- **Scheduled/background work** (e.g. periodic HCP reconciliation): must be implemented as cron-triggered functions, not long-running background loops.
+
+Risk: if a future feature genuinely requires a persistent connection (e.g. a live dispatch board watching many technicians simultaneously), a small dedicated real-time service would need to be added alongside Vercel. This is not needed now and is not blocking any current phase.
+
+## Decision: Real-Time Updates — Polling, Not WebSockets (For Now)
+
+GPS location and job-state "live" views will be implemented via short-interval polling (roughly every 15–30 seconds) rather than a WebSocket/real-time service. This is sufficient for a service-dispatch use case, costs nothing extra, and avoids introducing a new service/failure mode during early phases. If usage later demands true real-time (e.g. a dispatch board watching many technicians at once), the upgrade path is to add a managed real-time layer (e.g. Pusher, Supabase Realtime) on top — this does not require rearchitecting the rest of the system.
+
+## Decision: Multi-Tenant Data Model From Day One
+
+Overwatch will be built as a single-tenant *product* (serving the owner's company only) on top of a multi-tenant-*ready* data model, to preserve a future white-label path without a painful retrofit.
+
+Concretely:
+
+- Every core table (jobs, customers, users, parts, pricing, etc.) includes an `organization_id` from the start.
+- All queries are scoped by organization as a consistent pattern in the data access layer.
+- The database is seeded with exactly one organization (the owner's company) for now.
+
+Explicitly deferred (not built now, would go through the Section 32 feature-evaluation process if/when pursued): per-tenant branding/theming, new-company signup flow, billing/subscription system, multi-org admin console, cross-tenant isolation testing.
+
+## OPEN BLOCKER: HCP Webhook/API Tier Unknown
+
+Phase 0 exit criteria requires "HCP integration strategy documented," which cannot be fully completed until we know what the owner's current Housecall Pro plan supports.
+
+**Action required (owner):** Confirm with HCP (account settings or HCP support/sales) whether the current plan includes webhook access and/or full API access, and which events/endpoints are included.
+
+**Design mitigation (already decided, works regardless of answer):** The HCP sync layer will be built as an abstraction — an `HcpSyncSource` concept — that can be satisfied by either a webhook receiver (push) or a scheduled polling job against HCP's read API (pull). The rest of Overwatch (job records, state machine, events) consumes "HCP data changed" without caring which mechanism delivered it. If webhook access is unavailable, the system falls back to polling with no loss of functionality, only reduced immediacy. If webhook access is confirmed or added later, the push path can be added without touching downstream logic.
+
+This blocker does not stop Phase 1 (Project Foundation) work, but must be resolved before Phase 3 (HCP Integration Foundation) begins.
+
+---
+
+# 35B. PHASE 1 PROGRESS LOG
+
+## Completed
+
+- [x] Repository initialized, `main`/`dev` branch structure established (Section 7)
+- [x] npm workspaces monorepo structure created (`web/` frontend, `api/` backend)
+- [x] Backend foundation: Express app (TypeScript, strict mode), health check endpoint (`/api/health`), centralized error handler
+- [x] Frontend foundation: React + Vite + TypeScript, `vite-plugin-pwa` configured (manifest + service worker generation verified via production build)
+- [x] Frontend-to-backend connectivity proven end-to-end (dev proxy locally; `vercel.json` rewrite defined for production)
+- [x] `npm install && npm run dev` verified working from a clean install — starts both frontend and backend together (Section 6 target met)
+- [x] Prisma installed and connected to the real Neon database (not just configured — `prisma generate` and `prisma migrate dev` both run successfully against the live database)
+- [x] First real migration applied: `Organization` model exists as an actual table in Neon, establishing the multi-tenant-ready foundation decided in Section 35A
+- [x] Root `.gitignore` protecting `.env` and other secrets from being committed (Section 11)
+
+## In Progress / Not Yet Done
+
+- [ ] Actual deployment to Vercel not yet performed — `api/index.ts` (the serverless entrypoint) is written but unverified in production (see its file comments)
+- [ ] No authentication/authorization yet — that is Phase 2, not Phase 1
+- [ ] No CI/dependency security scanning configured yet
+- [ ] README/API/ARCHITECTURE docs beyond PROJECT_STATE.md not yet started (Section 26)
+
+## Known Blockers
+
+- HCP webhook/API tier still unconfirmed (see Section 35A) — does not block remaining Phase 1 work, but must be resolved before Phase 3 begins.
+
+## Next Step
+
+Continue Phase 1: decide on logging approach, basic API protection, and finish the remaining Phase 1 build items (Section "PHASE 1 — PROJECT FOUNDATION") before moving to Phase 2 (Identity & Permissions).
+
+---
+
 # 36. PROJECT STATE UPDATE RULE
 
 At the end of every meaningful development session, PROJECT_STATE.md should be updated when the state has materially changed.
 
 At minimum, update:
 
-* Current phase
-* Current objective
-* Completed work
-* In-progress work
-* Blockers
-* Known issues
-* Decisions
-* Security status
-* Testing status
-* Next step
+- Current phase
+- Current objective
+- Completed work
+- In-progress work
+- Blockers
+- Known issues
+- Decisions
+- Security status
+- Testing status
+- Next step
 
 This prevents the project from losing its place.
 
