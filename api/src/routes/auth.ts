@@ -1,15 +1,18 @@
 // routes/auth.ts
 //
-// The three endpoints that make up login: POST /login (check
-// credentials, start a session), POST /logout (end a session),
-// GET /me (who is currently logged in, if anyone).
+// The endpoints that make up login and account credentials: POST /login
+// (check credentials, start a session), POST /logout (end a session),
+// GET /me (who is currently logged in, if anyone), and POST
+// /change-password (set a new password — required immediately for
+// anyone still on an admin-issued temporary password).
 
 import { Router, type Request, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import { prisma } from "../db";
-import { verifyPassword } from "../auth/passwords";
+import { verifyPassword, hashPassword } from "../auth/passwords";
 import { createSession, deleteSession, SESSION_COOKIE_NAME } from "../auth/sessions";
 import { requireAuth } from "../auth/middleware";
+import { toPublicUser } from "../auth/publicUser";
 import { logger } from "../logger";
 
 export const authRouter = Router();
@@ -71,16 +74,7 @@ authRouter.post("/login", loginLimiter, async (req: Request, res: Response) => {
 
   logger.info({ userId: user.id }, "User logged in");
 
-  // Never return passwordHash, even hashed, to the client — there's no
-  // legitimate reason the frontend needs it, and it's one less place a
-  // sensitive value could leak (e.g. into browser dev tools, error
-  // reporting tools, etc.).
-  res.json({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    capabilities: user.capabilities,
-  });
+  res.json(toPublicUser(user));
 });
 
 authRouter.post("/logout", requireAuth, async (req: Request, res: Response) => {
@@ -94,11 +88,50 @@ authRouter.post("/logout", requireAuth, async (req: Request, res: Response) => {
 
 authRouter.get("/me", requireAuth, (req: Request, res: Response) => {
   // requireAuth guarantees req.user exists by this point.
+  res.json(toPublicUser(req.user!));
+});
+
+// Sets a new password. Two distinct cases, both handled by this one
+// endpoint:
+//
+//   1. mustChangePassword is true (admin created this account with a
+//      temporary password): no currentPassword needed — they proved
+//      who they are moments ago by logging in with the temp password
+//      to even reach this authenticated endpoint.
+//   2. mustChangePassword is false (a voluntary password change from
+//      someone already fully set up): currentPassword IS required, as
+//      a re-authentication step before allowing a sensitive change —
+//      this stops someone who found an unlocked, already-logged-in
+//      browser session from locking the real owner out by changing
+//      their password.
+authRouter.post("/change-password", requireAuth, async (req: Request, res: Response) => {
+  const { currentPassword, newPassword } = req.body ?? {};
   const user = req.user!;
-  res.json({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    capabilities: user.capabilities,
+
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    res.status(400).json({ error: "New password must be at least 8 characters" });
+    return;
+  }
+
+  if (!user.mustChangePassword) {
+    if (typeof currentPassword !== "string") {
+      res.status(400).json({ error: "Current password is required" });
+      return;
+    }
+    const currentMatches = await verifyPassword(currentPassword, user.passwordHash);
+    if (!currentMatches) {
+      res.status(401).json({ error: "Current password is incorrect" });
+      return;
+    }
+  }
+
+  const newHash = await hashPassword(newPassword);
+  const updatedUser = await prisma.user.update({
+    where: { id: user.id },
+    data: { passwordHash: newHash, mustChangePassword: false },
   });
+
+  logger.info({ userId: user.id }, "Password changed");
+
+  res.json(toPublicUser(updatedUser));
 });
