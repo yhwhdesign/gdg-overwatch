@@ -2,8 +2,8 @@
 # OVERWATCH — Master Project State & Execution Roadmap
 
 **Project:** Overwatch  
-**Document Version:** 1.2  
-**Status:** Phase 1 — Project Foundation (in progress). Phase 0 architecture decisions locked; HCP integration strategy still blocked pending tier confirmation (does not block Phase 1).  
+**Document Version:** 1.3  
+**Status:** Phase 1 — Project Foundation complete (pending final Definition of Done review). Ready to begin Phase 2 (Identity & Permissions). HCP integration strategy still blocked pending tier confirmation (does not block Phase 2).  
 **Development Model:** Local → `dev` → Testing/UAT → `main` → Production  
 **Primary Goal:** Build a secure, reliable, low-cost operational intelligence platform that works alongside Housecall Pro and eventually becomes the company's primary operational interface.
 
@@ -2423,9 +2423,9 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 
 ## In Progress / Not Yet Done
 
-- [ ] Actual deployment to Vercel not yet performed — `api/index.ts` (the serverless entrypoint) is written but unverified in production (see its file comments)
+- [x] Deployment to Vercel performed and verified — `api/index.ts` confirmed working as a real serverless function in production (frontend successfully reached the deployed API and showed "Connected."). Note: this confirms the serverless function itself works, but not yet the Neon database connection from Vercel's environment specifically, since the health check route doesn't touch the database — that gets a real test once Phase 2 adds a database-backed route.
 - [ ] No authentication/authorization yet — that is Phase 2, not Phase 1
-- [ ] No CI/dependency security scanning configured yet
+- [x] Dependency security scanning automated via GitHub Dependabot (weekly scans across root/api/web)
 - [ ] README/API/ARCHITECTURE docs beyond PROJECT_STATE.md not yet started (Section 26)
 
 ## Known Blockers
@@ -2442,12 +2442,9 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 
 ## Next Step
 
-Remaining before Phase 1 is complete:
-1. Security headers — largely covered by Helmet already; worth a short deliberate review rather than assuming defaults are sufficient for this project.
-2. Dependency/security scanning as an ongoing habit, not a one-time fix — decide whether to run `npm audit` manually before each merge to `main`, or automate it (e.g. GitHub Dependabot, which is free).
-3. First real deployment to Vercel + verification of `api/index.ts` in production.
+Phase 1's core build items are complete: working monorepo, frontend/backend connectivity, database connection with first migration, structured logging, baseline API protections, automated dependency scanning, and a verified production deployment.
 
-Then close out Phase 1's Definition of Done checklist before moving to Phase 2 (Identity & Permissions).
+Before formally starting Phase 2 (Identity & Permissions), do a final pass against Phase 1's Definition of Done checklist (Section "PHASE 1 — PROJECT FOUNDATION") to confirm nothing was missed. Then Phase 2 begins with deciding the actual authentication approach for technician login (see Phase 0's open question on auth architecture).
 
 ---
 

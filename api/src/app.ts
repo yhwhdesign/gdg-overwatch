@@ -17,10 +17,13 @@
 
 import express, { type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import pinoHttp from "pino-http";
 import { logger } from "./logger";
+import { attachUser } from "./auth/middleware";
+import { authRouter } from "./routes/auth";
 
 export function createApp() {
   const app = express();
@@ -69,14 +72,33 @@ export function createApp() {
   // back?"
   app.use(pinoHttp({ logger }));
 
-  // CORS: allows the frontend (running on a different origin during local
-  // dev — Vite on its own port) to call this API. In production, since
-  // the frontend and API deploy together under the same Vercel domain via
-  // vercel.json's routing, this is mostly a local-dev convenience. We keep
-  // it permissive for now (Phase 0/1) and will tighten it to an explicit
-  // allow-list once real user data is flowing (Phase 2 — Identity &
-  // Permissions).
-  app.use(cors());
+  // CORS: allows the frontend to call this API from a different origin
+  // (during local dev, Vite runs on its own port; in production it's
+  // usually the same domain, but we keep this explicit either way).
+  //
+  // IMPORTANT CHANGE FROM PHASE 1: this used to be a wildcard
+  // (`cors()` with no options, meaning "allow any origin"). That's no
+  // longer possible now that we use cookies for login sessions —
+  // browsers refuse to send credentials (cookies) on cross-origin
+  // requests unless the server names an EXACT origin, not a wildcard.
+  // FRONTEND_URL must be set in the environment (see .env.example);
+  // it defaults to Vite's local dev address if unset.
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL || "http://localhost:5173",
+      credentials: true, // allows the browser to send/receive the session cookie
+    })
+  );
+
+  // Parses cookies from incoming requests into req.cookies, so
+  // auth/middleware.ts can read the session cookie by name.
+  app.use(cookieParser());
+
+  // Runs on every request: looks up the session cookie (if any) and
+  // attaches the logged-in user to req.user for any route to use. Does
+  // NOT block unauthenticated requests by itself — see requireAuth /
+  // requireCapability in auth/middleware.ts for that.
+  app.use(attachUser);
 
   // Health check route. Every real backend needs a simple, unauthenticated
   // endpoint that says "the server is alive and can talk to the database."
@@ -93,7 +115,7 @@ export function createApp() {
 
   // --- Future routes get registered here, e.g.: ---
   // app.use("/api/jobs", jobsRouter);
-  // app.use("/api/auth", authRouter);
+  app.use("/api/auth", authRouter);
 
   // Catch-all error handler. Express treats any middleware with FOUR
   // arguments (err, req, res, next) as an error handler, regardless of
