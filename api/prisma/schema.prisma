@@ -38,7 +38,77 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  users User[]
+
   // Future relations will attach here, e.g.:
-  // users     User[]
   // jobs      Job[]
+}
+
+// User represents one person who can log into Overwatch (initially:
+// technicians and office staff at the owner's company).
+//
+// WHY organizationId IS HERE:
+// Consistent with the multi-tenant-ready decision above — every user
+// belongs to exactly one organization, and every query for "give me
+// this org's users" filters by it, even though only one organization
+// exists today.
+//
+// WHY "capabilities" INSTEAD OF A SINGLE "role":
+// A rigid role like technician/admin gets painful fast — the first time
+// you need "office staff who can view pricing but not edit it," a
+// single role field can't express that. Capabilities are a flat list of
+// specific permissions (e.g. "jobs:view_own", "jobs:edit_status",
+// "pricing:view") checked by name in middleware. This is the
+// capability-based permission model called for in PROJECT_STATE.md.
+// It's a plain string array (no separate table) deliberately — simple
+// enough to read and reason about at this stage; if the permission
+// model grows much more complex later (e.g. per-organization custom
+// roles), it can be promoted to its own table without changing how
+// callers check permissions.
+model User {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  email        String @unique
+  passwordHash String
+  name         String
+
+  // e.g. ["jobs:view_own", "jobs:edit_status"]. See comment above.
+  capabilities String[]
+
+  // Deactivating someone sets this to false rather than deleting the
+  // row — this preserves their history (who did what job, when) while
+  // immediately blocking login. Session lookups also check this flag,
+  // so an active session is invalidated the moment this flips to false.
+  isActive Boolean @default(true)
+
+  sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Session represents one logged-in browser/device for one user.
+//
+// WHY A DATABASE TABLE INSTEAD OF A JWT:
+// This is the Phase 2 architecture decision logged in PROJECT_STATE.md —
+// server-side sessions were chosen over JWTs specifically because they
+// can be revoked instantly (delete the row = that device is logged out
+// immediately), which matters for a workforce app where someone's
+// access may need to be cut off the moment they're let go. A JWT can't
+// be un-issued before it naturally expires.
+model Session {
+  // The token itself is the primary key — it's a long, random,
+  // unguessable string (generated in code, not by the database) that
+  // gets stored in the user's browser as an httpOnly cookie. Looking up
+  // a session is just "does a row with this token exist and is it not
+  // expired."
+  token String @id
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
