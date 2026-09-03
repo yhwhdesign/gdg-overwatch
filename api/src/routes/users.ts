@@ -3,17 +3,15 @@
 // Admin-only user management: create a new user (with a temporary
 // password, since there's no email-invite system — see
 // PROJECT_STATE.md Section 35D's zero-cost policy), list users in the
-// organization, and update a user's capabilities/active status.
-//
-// Every route in this file requires the "admin" capability — that's
-// enforced once, for the whole router, via requireCapability applied
-// with router.use() below, rather than repeated on each route.
+// organization, and update a user's active status/name. Changing
+// CAPABILITIES specifically is further restricted to MASTER users —
+// see the isMaster() checks below.
 
 import { Router, type Request, type Response } from "express";
 import { prisma } from "../db";
 import { hashPassword } from "../auth/passwords";
 import { generateTemporaryPassword } from "../auth/tempPassword";
-import { requireCapability } from "../auth/middleware";
+import { requireCapability, isMaster } from "../auth/middleware";
 import { CAPABILITIES } from "../auth/capabilities";
 import { logger } from "../logger";
 
@@ -30,6 +28,16 @@ usersRouter.post("/", async (req: Request, res: Response) => {
   }
   if (capabilities !== undefined && !Array.isArray(capabilities)) {
     res.status(400).json({ error: "capabilities must be an array of strings" });
+    return;
+  }
+
+  // Assigning ANY capability (even an empty-looking change) at
+  // creation is a role decision — only MASTER can make it. An ADMIN
+  // can still create users, just always with an empty capabilities
+  // list; a MASTER can create a user with whatever capabilities they
+  // choose, including granting ADMIN or MASTER itself.
+  if (Array.isArray(capabilities) && capabilities.length > 0 && !isMaster(req.user!)) {
+    res.status(403).json({ error: "Only a master user can assign capabilities" });
     return;
   }
 
@@ -105,6 +113,14 @@ usersRouter.patch("/:id", async (req: Request, res: Response) => {
 
   const data: { capabilities?: string[]; isActive?: boolean; name?: string } = {};
   if (capabilities !== undefined) {
+    // Changing capabilities at all — the core "role change" action —
+    // is reserved for MASTER. An ADMIN can still update isActive/name
+    // on the very same request; they just can't include capabilities
+    // in it.
+    if (!isMaster(req.user!)) {
+      res.status(403).json({ error: "Only a master user can change capabilities" });
+      return;
+    }
     if (!Array.isArray(capabilities)) {
       res.status(400).json({ error: "capabilities must be an array of strings" });
       return;

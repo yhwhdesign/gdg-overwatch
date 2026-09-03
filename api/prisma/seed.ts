@@ -14,7 +14,7 @@
 import "dotenv/config";
 import { prisma } from "../src/db";
 import { hashPassword } from "../src/auth/passwords";
-import { ADMIN_CAPABILITIES } from "../src/auth/capabilities";
+import { MASTER_CAPABILITIES } from "../src/auth/capabilities";
 
 async function main() {
   const adminEmail = process.env.SEED_ADMIN_EMAIL;
@@ -53,7 +53,7 @@ async function main() {
       email: adminEmail.toLowerCase(),
       passwordHash,
       name: adminName,
-      capabilities: ADMIN_CAPABILITIES,
+      capabilities: MASTER_CAPABILITIES,
     },
   });
 
