@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Root workspace (also covers the shared node_modules tree, since npm
+  # workspaces hoist dependencies to the root)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # api workspace — scanned separately so its own package.json/lockfile
+  # entries (even though they resolve into the shared root tree) get
+  # tracked explicitly by Dependabot
+  - package-ecosystem: "npm"
+    directory: "/api"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # web workspace
+  - package-ecosystem: "npm"
+    directory: "/web"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
