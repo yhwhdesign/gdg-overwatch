@@ -2,8 +2,8 @@
 # OVERWATCH — Master Project State & Execution Roadmap
 
 **Project:** Overwatch  
-**Document Version:** 1.7  
-**Status:** Phase 1 complete. Phase 2 (Identity & Permissions) complete, including a master/admin capability hierarchy (master can change roles, admin cannot) — all verified end-to-end in a real browser against a real database. Ready to begin Phase 3 (HCP Integration) once the tier blocker is resolved, or start non-HCP-dependent Phase 3/4 vertical slice work in parallel.  
+**Document Version:** 1.8  
+**Status:** Phase 1 & 2 complete. HCP webhook access confirmed (MAX plan) — Phase 3 (HCP Integration Foundation) is now unblocked and ready to begin.  
 **Development Model:** Local → `dev` → Testing/UAT → `main` → Production  
 **Primary Goal:** Build a secure, reliable, low-cost operational intelligence platform that works alongside Housecall Pro and eventually becomes the company's primary operational interface.
 
@@ -2401,15 +2401,11 @@ A future white-label customer may not use Housecall Pro at all. This is compatib
 
 This requires no work now — it is a constraint to keep in mind when the `Job`/`Customer` schema is actually designed (Phase 3/4), not a feature to build today. A full standalone job-creation/scheduling UI (for a non-HCP customer) is a substantial feature in its own right and would be evaluated and scheduled as its own phase if/when a real non-HCP customer exists.
 
-## OPEN BLOCKER: HCP Webhook/API Tier Unknown
+## RESOLVED: HCP Webhook/API Tier Confirmed
 
-Phase 0 exit criteria requires "HCP integration strategy documented," which cannot be fully completed until we know what the owner's current Housecall Pro plan supports.
+**Update:** Confirmed the organization has webhook access on Housecall Pro (MAX plan). This unblocks Phase 3 (HCP Integration Foundation).
 
-**Action required (owner):** Confirm with HCP (account settings or HCP support/sales) whether the current plan includes webhook access and/or full API access, and which events/endpoints are included.
-
-**Design mitigation (already decided, works regardless of answer):** The HCP sync layer will be built as an abstraction — an `HcpSyncSource` concept — that can be satisfied by either a webhook receiver (push) or a scheduled polling job against HCP's read API (pull). The rest of Overwatch (job records, state machine, events) consumes "HCP data changed" without caring which mechanism delivered it. If webhook access is unavailable, the system falls back to polling with no loss of functionality, only reduced immediacy. If webhook access is confirmed or added later, the push path can be added without touching downstream logic.
-
-This blocker does not stop Phase 1 (Project Foundation) work, but must be resolved before Phase 3 (HCP Integration Foundation) begins.
+Per the design already in place (the `HcpSyncSource` abstraction, decided when this was still an open blocker), we'll build the webhook receiver path as the primary sync mechanism, with polling available as a fallback pattern if ever needed (e.g. backfilling missed events, or a future non-MAX organization in the white-label scenario documented above). Next concrete steps for Phase 3: register a webhook endpoint in HCP's App Store, build the receiver route in Overwatch, and design the `Job`/`Customer` schema per the forward-looking non-HCP-compatibility note above.
 
 ---
 
