@@ -2,8 +2,8 @@
 # OVERWATCH — Master Project State & Execution Roadmap
 
 **Project:** Overwatch  
-**Document Version:** 1.5  
-**Status:** Phase 1 complete. Phase 2 (Identity & Permissions) core flow complete and verified end-to-end: login, sessions, capability-based permissions, instant revocation, admin user creation with forced password change. Remaining: admin UI for user management, real visual design. HCP integration strategy still blocked pending tier confirmation (does not block current work).  
+**Document Version:** 1.7  
+**Status:** Phase 1 complete. Phase 2 (Identity & Permissions) complete, including a master/admin capability hierarchy (master can change roles, admin cannot) — all verified end-to-end in a real browser against a real database. Ready to begin Phase 3 (HCP Integration) once the tier blocker is resolved, or start non-HCP-dependent Phase 3/4 vertical slice work in parallel.  
 **Development Model:** Local → `dev` → Testing/UAT → `main` → Production  
 **Primary Goal:** Build a secure, reliable, low-cost operational intelligence platform that works alongside Housecall Pro and eventually becomes the company's primary operational interface.
 
@@ -2474,13 +2474,17 @@ Chosen specifically because sessions can be revoked instantly (delete the row / 
 - [x] Frontend: `AuthContext`, `api.ts` fetch wrapper (always sends credentials), `LoginForm`, and an auth-aware `App.tsx` — verified working in a real browser against the real backend (login, session persistence across refresh, logout)
 - [x] Sensitive-header log redaction (added in Phase 1) re-verified as still working correctly with real session cookies now in play
 
+## Architecture Decision: Master/Admin Capability Hierarchy
+
+Added a `master` capability that sits above `admin`. `master` can do everything `admin` can, plus assign or change ANY user's capabilities (including granting/revoking `admin` or `master` itself). `admin` can manage users (create, activate/deactivate) but is explicitly blocked — server-side, in `requireCapability`'s override logic and in `routes/users.ts`'s `isMaster()` checks — from touching capabilities on any account, including their own. This exists so day-to-day user administration doesn't require the ability to self-escalate or grant elevated access to others. The seed script now grants the very first account `master`, not `admin`, since only `master` can ever grant `master` — an `admin`-only first account would have no path to ever create a master user.
+
 ## Known Follow-Ups
 
-- No admin UI for user management yet — creating/listing/updating users currently only works via direct API calls (curl or similar). A real admin screen is needed before this is usable by the actual business owner day-to-day.
 - The seed-script admin password was typed into chat during testing and should be rotated (low urgency: local dev only, never left this machine).
-- Login/change-password UI is functional but deliberately unstyled — real visual design (including the DoorDash/Uber Eats-inspired live job-tracking concept explored during this phase, and the owner's actual brand at thegaragedoorguycorp.com) is planned as its own dedicated design pass once more of the app exists.
-- No frontend route protection yet (e.g. redirecting away from a protected page) — not needed yet since there's only one page, but will matter once real pages exist.
+- Login/change-password/admin UI is functional but deliberately unstyled — real visual design (including the DoorDash/Uber Eats-inspired live job-tracking concept explored during this phase, and the owner's actual brand at thegaragedoorguycorp.com) is planned as its own dedicated design pass once more of the app exists.
+- No frontend route protection yet (e.g. redirecting away from a protected page) — not needed yet since there's only one page with a simple tab toggle, but will matter once real routing exists.
 - No password-reset-if-forgotten flow (distinct from the forced-change-on-first-login flow) — will need one eventually, likely still without email per the zero-cost policy (e.g. an admin-triggered reset that reissues a new temporary password).
+- The master/admin distinction currently only covers the two capabilities that exist so far (`admin`, `master`) — as real business capabilities are added (e.g. `jobs:edit_status`), the same "only master can change capabilities" rule automatically covers them too, since it gates on touching the `capabilities` field at all, not on which specific values are being set.
 
 ## Completed (continued)
 
@@ -2488,10 +2492,12 @@ Chosen specifically because sessions can be revoked instantly (delete the row / 
 - [x] Admin-only user management routes: `POST /api/users` (create, returns a one-time temporary password), `GET /api/users` (list), `PATCH /api/users/:id` (update capabilities/isActive/name) — all scoped to the admin's organization
 - [x] `POST /api/auth/change-password` — handles both the forced first-time case (no current password needed, since login moments earlier already proved identity) and a voluntary change case (requires current password as re-authentication)
 - [x] Full flow verified for real: admin created a test technician account via the API, logged in as that account in a separate browser session with the temp password, was correctly forced into the password-change screen before reaching anything else, and landed in the normal authenticated view after setting a real password
+- [x] Admin UI (`AdminUsersPage`) built and verified in the browser: create user (temp password shown once), list users, toggle active/deactivated status — all driven through the real API, with the actual enforcement living server-side (`requireCapability("admin")`), not in the UI
+- [x] Master/admin capability hierarchy added and verified: `master` capability can assign/change capabilities on any user (including granting `admin`/`master`); `admin` alone is blocked from this both in the UI (controls simply don't appear) and server-side (`isMaster()` check in `routes/users.ts`, independent of the UI)
 
 ## Next Step
 
-Continue Phase 2: build a real admin UI for user management (currently API-only), then move toward the first real vertical slice (technician login → today's jobs) once identity is fully solid. Visual design remains deliberately deferred to its own pass.
+Phase 2's core scope is complete, including the master/admin hierarchy. Before moving to Phase 3, confirm the HCP integration tier blocker (Section 35A) is resolved if possible, since Phase 3 (HCP Integration Foundation) depends on it. If still blocked, the next productive step is starting the first real vertical slice's non-HCP-dependent pieces: technician login → "today's jobs" UI shell (with placeholder/mock job data until HCP integration unblocks), per the Phase 0 vertical-slice plan.
 
 ---
 

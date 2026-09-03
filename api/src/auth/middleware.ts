@@ -1,17 +1,14 @@
 // middleware.ts
 //
-// Two pieces of Express middleware that everything else builds on:
+// Pieces of Express middleware that everything else builds on:
 //
 //   1. attachUser — runs on EVERY request. Reads the session cookie (if
 //      any), looks up the user, and attaches it to req.user. It does
 //      NOT block unauthenticated requests — it just makes "who is this,
 //      if anyone" available to whatever route handles the request next.
 //
-//   2. requireAuth / requireCapability — used explicitly on routes that
-//      need protection. requireAuth blocks anyone without a valid
-//      session. requireCapability blocks anyone without a specific
-//      named permission (see the capabilities comment in schema.prisma
-//      for why we use named capabilities instead of a single role).
+//   2. requireAuth / requirePasswordSet / requireCapability — used
+//      explicitly on routes that need protection.
 
 import type { Request, Response, NextFunction } from "express";
 import type { User } from "@prisma/client";
@@ -86,9 +83,27 @@ export function requirePasswordSet(req: Request, res: Response, next: NextFuncti
   next();
 }
 
+// True if the user has the MASTER capability — the only capability
+// that can assign/change anyone's capabilities. Exported as a plain
+// function (not just middleware) because routes/users.ts needs to
+// check this conditionally, partway through a handler, not as a
+// blanket gate on an entire route.
+export function isMaster(user: User): boolean {
+  return user.capabilities.includes(CAPABILITIES.MASTER);
+}
+
 // Blocks the request unless the logged-in user has the named
-// capability (or is an admin, which satisfies any capability check).
-// Always implies requireAuth's check too.
+// capability — with a deliberate two-tier override hierarchy:
+//
+//   - MASTER satisfies ANY capability check, including a check for
+//     MASTER itself.
+//   - ADMIN satisfies any capability check EXCEPT a check for MASTER
+//     specifically. This is what makes "admins can't change roles"
+//     actually true: the "change capabilities" action is gated on
+//     requireCapability(CAPABILITIES.MASTER) (or the isMaster() helper
+//     above), which ADMIN's override deliberately does not reach.
+//
+// Always implies being logged in first.
 //
 // Usage: app.post("/api/jobs/:id/status", requireCapability("jobs:edit_status"), handler)
 export function requireCapability(capability: string) {
@@ -97,7 +112,13 @@ export function requireCapability(capability: string) {
       res.status(401).json({ error: "Not logged in" });
       return;
     }
-    if (!req.user.capabilities.includes(capability) && !req.user.capabilities.includes(CAPABILITIES.ADMIN)) {
+
+    const caps = req.user.capabilities;
+    const hasDirectly = caps.includes(capability);
+    const hasMasterOverride = caps.includes(CAPABILITIES.MASTER);
+    const hasAdminOverride = capability !== CAPABILITIES.MASTER && caps.includes(CAPABILITIES.ADMIN);
+
+    if (!hasDirectly && !hasMasterOverride && !hasAdminOverride) {
       res.status(403).json({ error: "You don't have permission to do that" });
       return;
     }

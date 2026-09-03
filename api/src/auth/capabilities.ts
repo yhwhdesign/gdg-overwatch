@@ -13,13 +13,22 @@
 // don't exist yet.
 
 export const CAPABILITIES = {
-  // Broad administrative access — initially given to the seeded first
-  // user. Real fine-grained admin capabilities get split out as the
-  // permission model matures past this initial foundation.
+  // Can manage users (create, activate/deactivate) and satisfies any
+  // ordinary capability check, but CANNOT change anyone's capabilities
+  // — that's reserved for MASTER. See middleware.ts's requireCapability
+  // for exactly how this hierarchy is enforced.
   ADMIN: "admin",
+
+  // Sits above ADMIN. The only capability that can assign or change
+  // capabilities on any user (including granting/revoking ADMIN or
+  // MASTER itself). This split exists specifically so that an admin
+  // can run day-to-day user management without being able to grant
+  // themselves or anyone else more access than they were given.
+  MASTER: "master",
 } as const;
 
 // A convenience bundle for the very first user created by the seed
-// script — full access, since there's no one else yet to have granted
-// them anything more specific.
-export const ADMIN_CAPABILITIES: string[] = [CAPABILITIES.ADMIN];
+// script — this MUST be MASTER, not ADMIN: if the first user were only
+// ADMIN, there would be no way for anyone to ever become MASTER
+// afterward, since only MASTER can assign capabilities.
+export const MASTER_CAPABILITIES: string[] = [CAPABILITIES.MASTER];
