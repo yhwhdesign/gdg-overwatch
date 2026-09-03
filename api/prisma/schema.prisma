@@ -83,6 +83,14 @@ model User {
   // so an active session is invalidated the moment this flips to false.
   isActive Boolean @default(true)
 
+  // True for a user created by an admin with a temporary password (see
+  // routes/users.ts). While true, the login flow forces them to set a
+  // real password before they can do anything else — this is how we
+  // avoid needing an email-invite system (Section 35D's zero-cost
+  // policy): an admin can create a working account and hand over a
+  // temporary password directly, without any email infrastructure.
+  mustChangePassword Boolean @default(false)
+
   sessions Session[]
 
   createdAt DateTime @default(now())

@@ -18,6 +18,7 @@ type AuthUser = {
   email: string;
   name: string;
   capabilities: string[];
+  mustChangePassword: boolean;
 };
 
 type AuthContextValue = {
@@ -25,6 +26,7 @@ type AuthContextValue = {
   isLoading: boolean; // true only during the initial "do we have a session already" check
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  changePassword: (args: { currentPassword?: string; newPassword: string }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -55,13 +57,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(loggedInUser);
   }
 
-  async function logout() {
+    async function logout() {
     await apiFetch("/api/auth/logout", { method: "POST" });
     setUser(null);
   }
 
+  async function changePassword(args: { currentPassword?: string; newPassword: string }) {
+    const updatedUser = await apiFetch<AuthUser>("/api/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify(args),
+    });
+    setUser(updatedUser);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, changePassword }}>
       {children}
     </AuthContext.Provider>
   );

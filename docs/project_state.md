@@ -2,8 +2,8 @@
 # OVERWATCH — Master Project State & Execution Roadmap
 
 **Project:** Overwatch  
-**Document Version:** 1.4  
-**Status:** Phase 1 complete. Phase 2 (Identity & Permissions) backend + basic frontend login verified working end-to-end against a real database and real browser session. Remaining Phase 2 work: user creation/invite flow, password reset, real UI design. HCP integration strategy still blocked pending tier confirmation (does not block current work).  
+**Document Version:** 1.5  
+**Status:** Phase 1 complete. Phase 2 (Identity & Permissions) core flow complete and verified end-to-end: login, sessions, capability-based permissions, instant revocation, admin user creation with forced password change. Remaining: admin UI for user management, real visual design. HCP integration strategy still blocked pending tier confirmation (does not block current work).  
 **Development Model:** Local → `dev` → Testing/UAT → `main` → Production  
 **Primary Goal:** Build a secure, reliable, low-cost operational intelligence platform that works alongside Housecall Pro and eventually becomes the company's primary operational interface.
 
@@ -2476,14 +2476,47 @@ Chosen specifically because sessions can be revoked instantly (delete the row / 
 
 ## Known Follow-Ups
 
-- No "change password" flow yet — needed soon; the seed-script password was typed into chat during testing tonight and should be rotated once this exists (low urgency: local dev only, never left this machine).
-- The `/api/admin/ping` test route is temporary and should be removed once a real admin-only route exists to serve the same verification purpose.
-- Login UI is functional but deliberately unstyled — real visual design (including the DoorDash/Uber Eats-inspired live job-tracking concept explored tonight, and the owner's actual brand at thegaragedoorguycorp.com) is planned as its own dedicated design pass once more of the app exists, not applied piecemeal per-screen.
+- No admin UI for user management yet — creating/listing/updating users currently only works via direct API calls (curl or similar). A real admin screen is needed before this is usable by the actual business owner day-to-day.
+- The seed-script admin password was typed into chat during testing and should be rotated (low urgency: local dev only, never left this machine).
+- Login/change-password UI is functional but deliberately unstyled — real visual design (including the DoorDash/Uber Eats-inspired live job-tracking concept explored during this phase, and the owner's actual brand at thegaragedoorguycorp.com) is planned as its own dedicated design pass once more of the app exists.
 - No frontend route protection yet (e.g. redirecting away from a protected page) — not needed yet since there's only one page, but will matter once real pages exist.
+- No password-reset-if-forgotten flow (distinct from the forced-change-on-first-login flow) — will need one eventually, likely still without email per the zero-cost policy (e.g. an admin-triggered reset that reissues a new temporary password).
+
+## Completed (continued)
+
+- [x] `mustChangePassword` flag added to `User`; enforced both server-side (`requirePasswordSet` middleware blocks all business routes until cleared) and in the frontend (forced `ChangePasswordForm` screen) — verified end-to-end in a real browser, not just via curl
+- [x] Admin-only user management routes: `POST /api/users` (create, returns a one-time temporary password), `GET /api/users` (list), `PATCH /api/users/:id` (update capabilities/isActive/name) — all scoped to the admin's organization
+- [x] `POST /api/auth/change-password` — handles both the forced first-time case (no current password needed, since login moments earlier already proved identity) and a voluntary change case (requires current password as re-authentication)
+- [x] Full flow verified for real: admin created a test technician account via the API, logged in as that account in a separate browser session with the temp password, was correctly forced into the password-change screen before reaching anything else, and landed in the normal authenticated view after setting a real password
 
 ## Next Step
 
-Continue Phase 2: decide and build how new users get created/invited (there's no UI for this yet, only the one-time seed script), then move toward the first real vertical slice (technician login → today's jobs) once identity is fully solid.
+Continue Phase 2: build a real admin UI for user management (currently API-only), then move toward the first real vertical slice (technician login → today's jobs) once identity is fully solid. Visual design remains deliberately deferred to its own pass.
+
+---
+
+# 35D. COST POLICY — EXPLICIT
+
+This section exists because the project owner asked for unambiguous clarity on cost, including in production, not just during development. It restates and sharpens Section 5's cost philosophy with specifics.
+
+## The Principle
+
+Default to free, open-source, and self-hosted options. No paid service, tier upgrade, or new third-party dependency gets added without going through the Third-Party Dependency Rule (Section 5): what it does, why it's needed, alternatives considered, cost, and an exit plan — and without the project owner's explicit sign-off.
+
+## Honest Current-Cost Assessment (do not skip this — it matters)
+
+Everything in the stack today is free to develop with. Two things are worth knowing now, not discovering later:
+
+1. **Vercel's free "Hobby" tier is intended for personal/non-commercial projects.** Its terms of service technically expect real commercial/business use to be on a paid plan (Pro starts around $20/month). Overwatch, once it's genuinely running day-to-day dispatch operations for a real company rather than being developed/tested, is commercial use — staying on Hobby at that point is a terms-of-service gray area, not a guaranteed-safe permanent free path. This is the most likely near-term real cost the project will face.
+2. **Neon's free tier has usage limits** (compute time, storage, data transfer) that are generous for development and early production but are not unlimited. This ceiling is further out than Vercel's and less urgent, but not indefinite.
+
+Everything else currently in use (GitHub private repos, Dependabot, Prisma ORM itself, all current npm packages) has no realistic cost ceiling at this project's scale.
+
+## What This Means Practically
+
+- Development and early testing: genuinely $0.
+- The first real cost the project will likely need to accept, once technicians are actually using this for real work, is Vercel Pro (~$20/month) — this should be budgeted for as a known, near-term, small cost rather than treated as a surprise.
+- Any other paid addition (email service, SMS, real-time infrastructure, etc.) gets evaluated individually and explicitly before adoption — nothing gets added "because it's convenient."
 
 ---
 

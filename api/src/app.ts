@@ -22,9 +22,9 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import pinoHttp from "pino-http";
 import { logger } from "./logger";
-import { attachUser, requireCapability } from "./auth/middleware";
+import { attachUser, requirePasswordSet } from "./auth/middleware";
 import { authRouter } from "./routes/auth";
-import { CAPABILITIES } from "./auth/capabilities";
+import { usersRouter } from "./routes/users";
 
 
 export function createApp() {
@@ -115,17 +115,16 @@ export function createApp() {
     });
   });
 
-  // --- Future routes get registered here, e.g.: ---
+    // --- Future routes get registered here, e.g.: ---
   // app.use("/api/jobs", jobsRouter);
   app.use("/api/auth", authRouter);
 
-  // TEMPORARY test route — proves requireCapability actually works
-  // end-to-end (blocks logged-out users, blocks users without the
-  // "admin" capability, allows users who have it). Remove once a real
-  // admin-only route exists to serve this purpose instead.
-  app.get("/api/admin/ping", requireCapability(CAPABILITIES.ADMIN), (_req: Request, res: Response) => {
-    res.json({ ok: true, message: "You have admin access." });
-  });
+  // requirePasswordSet is applied here, not inside routes/users.ts
+  // itself, so it's visible at the point routes get wired together
+  // which routes carry the "must have set a real password" gate.
+  // Real future business routes (jobs, etc.) should follow this same
+  // pattern: requireCapability(...), requirePasswordSet, handler.
+  app.use("/api/users", requirePasswordSet, usersRouter);
 
   // Catch-all error handler. Express treats any middleware with FOUR
   // arguments (err, req, res, next) as an error handler, regardless of
