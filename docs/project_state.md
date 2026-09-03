@@ -2416,6 +2416,10 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 - [x] Prisma installed and connected to the real Neon database (not just configured — `prisma generate` and `prisma migrate dev` both run successfully against the live database)
 - [x] First real migration applied: `Organization` model exists as an actual table in Neon, establishing the multi-tenant-ready foundation decided in Section 35A
 - [x] Root `.gitignore` protecting `.env` and other secrets from being committed (Section 11)
+- [x] Repository pushed to GitHub, `main` and `dev` branches both live and in sync (private repo: `yhwhdesign/gdg-overwatch`)
+- [x] Structured logging (Pino) added — every request auto-logs method/status/response time; startup and error paths route through the shared logger instead of raw console calls
+- [x] Baseline API protection added: Helmet (security headers), rate limiting (100 req/15min per IP), 1MB JSON body size cap
+- [x] Sensitive header redaction added to the logger (cookies, Authorization) after a real cookie value was observed appearing in plaintext dev logs during testing — fixed before any real session/auth data existed
 
 ## In Progress / Not Yet Done
 
@@ -2428,9 +2432,22 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 
 - HCP webhook/API tier still unconfirmed (see Section 35A) — does not block remaining Phase 1 work, but must be resolved before Phase 3 begins.
 
+## Lessons Learned This Session
+
+- `api/.env` was briefly committed locally before being caught and removed via `git rm --cached` + amend, before it was ever pushed. No real exposure occurred, but the takeaway: double-check `git status` before the *first* commit in a new repo to confirm `.gitignore` is actually excluding what it should.
+- When creating a new GitHub repo to push an existing local repo into, leave README/.gitignore/license checkboxes unchecked — checking any of them creates a conflicting initial commit and requires an unrelated-histories merge to fix (as happened here).
+- A transitive dependency (`qs`, via `body-parser`/`express`) had a known moderate-severity vulnerability that `npm audit fix` couldn't auto-resolve because upstream (`body-parser`) hadn't updated its declared version range yet. Fixed via an npm `overrides` entry forcing the patched version — this must live in the ROOT `package.json` in an npm workspaces setup, not the individual workspace's, since npm manages one shared dependency tree.
+- `pino-http`'s default request logging captures full HTTP headers, including cookies and Authorization tokens. This was caught in practice — a stale, unrelated browser cookie appeared in plaintext in local dev logs — before any real session/auth system existed. Fixed by adding a `redact` config to the logger (removes `req.headers.cookie`, `req.headers.authorization`, and `set-cookie` from every log line entirely). This must be treated as a non-negotiable default going forward, not something to remember to add later once Phase 2 introduces real sessions.
+- A zip file used to hand off code changes had an incorrect internal path (`api/app.ts` instead of `api/src/app.ts`), and extracting/replacing with it wiped out the rest of the `api/` folder. Recovered cleanly via `git restore` since everything except `.env` was already committed. Going forward: hand off file changes as direct copy-paste content or exact single-file replacements, not zipped folder merges, to avoid structural mismatches.
+
 ## Next Step
 
-Continue Phase 1: decide on logging approach, basic API protection, and finish the remaining Phase 1 build items (Section "PHASE 1 — PROJECT FOUNDATION") before moving to Phase 2 (Identity & Permissions).
+Remaining before Phase 1 is complete:
+1. Security headers — largely covered by Helmet already; worth a short deliberate review rather than assuming defaults are sufficient for this project.
+2. Dependency/security scanning as an ongoing habit, not a one-time fix — decide whether to run `npm audit` manually before each merge to `main`, or automate it (e.g. GitHub Dependabot, which is free).
+3. First real deployment to Vercel + verification of `api/index.ts` in production.
+
+Then close out Phase 1's Definition of Done checklist before moving to Phase 2 (Identity & Permissions).
 
 ---
 
