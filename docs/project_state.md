@@ -2,8 +2,8 @@
 # OVERWATCH — Master Project State & Execution Roadmap
 
 **Project:** Overwatch  
-**Document Version:** 1.3  
-**Status:** Phase 1 — Project Foundation complete (pending final Definition of Done review). Ready to begin Phase 2 (Identity & Permissions). HCP integration strategy still blocked pending tier confirmation (does not block Phase 2).  
+**Document Version:** 1.4  
+**Status:** Phase 1 complete. Phase 2 (Identity & Permissions) backend + basic frontend login verified working end-to-end against a real database and real browser session. Remaining Phase 2 work: user creation/invite flow, password reset, real UI design. HCP integration strategy still blocked pending tier confirmation (does not block current work).  
 **Development Model:** Local → `dev` → Testing/UAT → `main` → Production  
 **Primary Goal:** Build a secure, reliable, low-cost operational intelligence platform that works alongside Housecall Pro and eventually becomes the company's primary operational interface.
 
@@ -2445,6 +2445,45 @@ This blocker does not stop Phase 1 (Project Foundation) work, but must be resolv
 Phase 1's core build items are complete: working monorepo, frontend/backend connectivity, database connection with first migration, structured logging, baseline API protections, automated dependency scanning, and a verified production deployment.
 
 Before formally starting Phase 2 (Identity & Permissions), do a final pass against Phase 1's Definition of Done checklist (Section "PHASE 1 — PROJECT FOUNDATION") to confirm nothing was missed. Then Phase 2 begins with deciding the actual authentication approach for technician login (see Phase 0's open question on auth architecture).
+
+---
+
+# 35C. PHASE 2 PROGRESS LOG (Identity & Permissions)
+
+## Architecture Decision: Server-Side Sessions, Not JWT
+
+Chosen specifically because sessions can be revoked instantly (delete the row / flip `isActive` to false = access is cut off immediately, everywhere), which matters for a workforce app where someone's access may need to end the moment they're let go. This was tested for real, not just assumed: a live session was proven to stop working on the very next request after setting `isActive: false`, with no delay and no need to hunt down/delete the specific session token.
+
+## Architecture Decision: Capability-Based Permissions, Not Roles
+
+`User.capabilities` is a flat string array (e.g. `["admin"]`, eventually things like `"jobs:view_own"`, `"jobs:edit_status"`) checked by name via `requireCapability(...)` middleware, rather than a single rigid `role` field. The `"admin"` capability acts as a universal override. Chosen to avoid the common failure mode where a fixed role enum can't express a real permission need (e.g. "office staff who can view pricing but not edit it") without a schema change.
+
+## Completed
+
+- [x] `User` and `Session` Prisma models added, scoped to `Organization` (multi-tenant pattern from Phase 0 carried through)
+- [x] Password hashing via bcrypt (cost factor 12), isolated to `auth/passwords.ts`
+- [x] Session creation/lookup/deletion (`auth/sessions.ts`) using a cryptographically random token as the session's primary key
+- [x] `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` implemented and verified against the real database (not just type-checked)
+- [x] Login has its own stricter rate limit (10/15min) separate from the general API limit (100/15min), to make brute-forcing impractical
+- [x] Login failure messages are deliberately generic/identical for "no such user" vs "wrong password" to prevent user-enumeration
+- [x] `requireAuth`/`requireCapability` Express middleware, verified with a real protected test route (`GET /api/admin/ping`) against all three states: logged out (401), logged in without capability, logged in with capability (200)
+- [x] CORS updated from a wildcard to an explicit origin + `credentials: true`, required once cookies were introduced (a wildcard origin cannot be combined with credentialed requests)
+- [x] Cookie security: `httpOnly` (blocks JS/XSS access), `Secure` in production, `SameSite=Strict` (primary CSRF defense)
+- [x] Shared Prisma client (`src/db.ts`) added with the serverless connection-reuse pattern, to avoid exhausting Neon's connection limit under repeated Vercel function invocations
+- [x] Seed script (`prisma/seed.ts`) creates the first Organization + admin User from env vars, since there is no self-signup flow by design
+- [x] Frontend: `AuthContext`, `api.ts` fetch wrapper (always sends credentials), `LoginForm`, and an auth-aware `App.tsx` — verified working in a real browser against the real backend (login, session persistence across refresh, logout)
+- [x] Sensitive-header log redaction (added in Phase 1) re-verified as still working correctly with real session cookies now in play
+
+## Known Follow-Ups
+
+- No "change password" flow yet — needed soon; the seed-script password was typed into chat during testing tonight and should be rotated once this exists (low urgency: local dev only, never left this machine).
+- The `/api/admin/ping` test route is temporary and should be removed once a real admin-only route exists to serve the same verification purpose.
+- Login UI is functional but deliberately unstyled — real visual design (including the DoorDash/Uber Eats-inspired live job-tracking concept explored tonight, and the owner's actual brand at thegaragedoorguycorp.com) is planned as its own dedicated design pass once more of the app exists, not applied piecemeal per-screen.
+- No frontend route protection yet (e.g. redirecting away from a protected page) — not needed yet since there's only one page, but will matter once real pages exist.
+
+## Next Step
+
+Continue Phase 2: decide and build how new users get created/invited (there's no UI for this yet, only the one-time seed script), then move toward the first real vertical slice (technician login → today's jobs) once identity is fully solid.
 
 ---
 
