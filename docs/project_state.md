@@ -2391,6 +2391,16 @@ Concretely:
 
 Explicitly deferred (not built now, would go through the Section 32 feature-evaluation process if/when pursued): per-tenant branding/theming, new-company signup flow, billing/subscription system, multi-org admin console, cross-tenant isolation testing.
 
+## Forward-Looking Note: White-Label Customers Without HCP
+
+A future white-label customer may not use Housecall Pro at all. This is compatible with the architecture already in place, as long as one principle is followed going forward: Overwatch's own `Job`/`Customer`/etc. models (once built) must be designed as Overwatch's own first-class records, not a schema shaped to mirror HCP's data specifically. Concretely, this means:
+
+- Any field that only makes sense for HCP-sourced data (e.g. an `hcpJobId`) must be optional, not required — present only when relevant.
+- Each `Organization` will need a field indicating its data source (e.g. `dataSource: "housecall_pro" | "native"`), determining whether jobs/customers arrive via the `HcpSyncSource` abstraction (Section 35A) or are created directly through Overwatch's own UI.
+- Everything built on top of `Job`/`Customer` (permissions, state machine, technician app) should not need to know or care which source populated the record.
+
+This requires no work now — it is a constraint to keep in mind when the `Job`/`Customer` schema is actually designed (Phase 3/4), not a feature to build today. A full standalone job-creation/scheduling UI (for a non-HCP customer) is a substantial feature in its own right and would be evaluated and scheduled as its own phase if/when a real non-HCP customer exists.
+
 ## OPEN BLOCKER: HCP Webhook/API Tier Unknown
 
 Phase 0 exit criteria requires "HCP integration strategy documented," which cannot be fully completed until we know what the owner's current Housecall Pro plan supports.
