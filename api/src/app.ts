@@ -17,14 +17,57 @@
 
 import express, { type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import pinoHttp from "pino-http";
+import { logger } from "./logger";
 
 export function createApp() {
   const app = express();
 
+  // Sets a set of standard security-related HTTP response headers
+  // (hides the "X-Powered-By: Express" fingerprint, prevents MIME-type
+  // sniffing, blocks the app from being embedded in a hostile iframe,
+  // etc.). This is a one-line, zero-cost baseline every Express app
+  // should have — it doesn't replace real authentication/authorization,
+  // it just closes off a handful of well-known attack surfaces that
+  // exist regardless of who's logged in.
+  app.use(helmet());
+
+  // Rate limiting: without this, nothing stops one client (an attacker,
+  // a buggy script, or a runaway frontend retry loop) from hammering
+  // the API thousands of times a second. This matters even before real
+  // authentication exists in Phase 2, because unauthenticated endpoints
+  // (health checks now, login later) are exactly what gets targeted
+  // first. 100 requests per 15 minutes per IP is a generous ceiling for
+  // normal use; we'll revisit this number once real usage patterns
+  // exist (e.g. a dispatch board polling every 15-30s needs its own
+  // higher allowance — see PROJECT_STATE.md's real-time polling
+  // decision).
+  const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100,
+    standardHeaders: true, // returns rate limit info in RateLimit-* headers
+    legacyHeaders: false,
+  });
+  app.use("/api", apiLimiter);
+
   // Parses incoming JSON request bodies (e.g. from the React frontend)
-  // into req.body. Without this, req.body would be undefined for any
-  // POST/PUT/PATCH request that sends JSON.
-  app.use(express.json());
+  // into req.body. The size limit caps how large a single request body
+  // can be — without it, express.json() accepts a body of any size,
+  // which means someone could send a huge payload just to try to
+  // exhaust server memory. 1MB is generous for any JSON payload this
+  // app realistically sends today; we'll raise this deliberately if a
+  // future feature (e.g. bulk import) genuinely needs more.
+  app.use(express.json({ limit: "1mb" }));
+
+  // Automatically logs one structured line per request/response, e.g.
+  // method, path, status code, and response time — without us having to
+  // add a logger.info(...) call to every single route by hand. This is
+  // the first thing you'll look at when something in production behaves
+  // unexpectedly: "what requests actually came in, and what did we send
+  // back?"
+  app.use(pinoHttp({ logger }));
 
   // CORS: allows the frontend (running on a different origin during local
   // dev — Vite on its own port) to call this API. In production, since
@@ -63,7 +106,11 @@ export function createApp() {
   // generic message; we'll expand this with structured logging in
   // Phase 1's "Logging" build item.
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    console.error("Unhandled error:", err);
+    // logger.error (not console.error) so this shows up as a structured,
+    // filterable log entry — e.g. { level: "error", msg: "Unhandled error", err: {...} }
+    // instead of a plain-text line that's only readable by a human
+    // watching the terminal live.
+    logger.error({ err }, "Unhandled error");
     res.status(500).json({ error: "Internal server error" });
   });
 

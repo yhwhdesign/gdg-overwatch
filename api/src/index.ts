@@ -7,6 +7,7 @@
 
 import "dotenv/config"; // loads variables from .env into process.env before anything else runs
 import { createApp } from "./app";
+import { logger } from "./logger";
 
 const app = createApp();
 
@@ -17,6 +18,5 @@ const app = createApp();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
 
 app.listen(PORT, () => {
-  console.log(`Overwatch API listening on http://localhost:${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
+  logger.info({ port: PORT }, "Overwatch API listening");
 });
